@@ -1,16 +1,16 @@
-<template>
-  <div id="app">
-    <h1>Invoice Downloader</h1>
-    <date-picker v-model="selectedDate"></date-picker>
-    <button @click="downloadInvoice">Download Invoice</button>
-  </div>
-</template>
+  <template>
+    <div class="app-container">
+      <h1 class="app-title">Timesheet Generator</h1>
+      <DatePicker v-model="selectedDate" class="date-picker" />
+      <button @click="downloadTimesheet" class="download-button">Download Timesheet</button>
+    </div>
+  </template>
 
 <script>
-import { useToast } from 'vue-toastification'
-import { ref } from 'vue'
-import axios from 'axios'
-import DatePicker from 'vue3-datepicker'
+import axios from 'axios';
+import { ref } from 'vue';
+import { useToast } from 'vue-toastification';
+import DatePicker from 'vue3-datepicker';
 
 export default {
   name: 'App',
@@ -19,8 +19,7 @@ export default {
   },
   setup() {
     const selectedDate = ref(new Date())
-
-    const downloadInvoice = () => {
+    const downloadTimesheet = () => {
       const year = selectedDate.value.getFullYear()
       const month = selectedDate.value.getMonth() + 1
       const yearMonth = `${year}-${month.toString().padStart(2, '0')}`
@@ -40,11 +39,53 @@ export default {
         })
     }
 
-    return { selectedDate, downloadInvoice }
+    return { selectedDate, downloadTimesheet }
   }
 }
 </script>
 
 <style>
-/* Add your styles here */
+body {
+  background-color: #0d1117;
+  font-family: Arial, sans-serif;
+  color: #c9d1d9;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0 auto;
+  max-width: 500px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.app-title {
+  color: white;
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+.date-picker,
+.download-button {
+  margin: 10px 0;
+  padding: 10px;
+  font-size: 1.2em;
+}
+
+.download-button {
+  background-color: #238636;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #2ea44f;
+}
 </style>
