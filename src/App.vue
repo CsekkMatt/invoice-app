@@ -3,14 +3,18 @@
       <h1 class="app-title">Timesheet Generator</h1>
       <DatePicker v-model="selectedDate" class="date-picker" />
       <button @click="downloadTimesheet" class="download-button">Download Timesheet</button>
+      <div class="ripple-loader" v-if="isLoading">
+        <div></div>
+        <div></div>
+      </div>
     </div>
   </template>
 
 <script>
-import axios from 'axios';
 import { ref } from 'vue';
 import { useToast } from 'vue-toastification';
 import DatePicker from 'vue3-datepicker';
+import { downloadInvoice } from './service/invoiceService';
 
 export default {
   name: 'App',
@@ -19,27 +23,31 @@ export default {
   },
   setup() {
     const selectedDate = ref(new Date())
-    const downloadTimesheet = () => {
+    const isLoading = ref(false);
+    const downloadTimesheet = async () => {
+      isLoading.value = true;
       const year = selectedDate.value.getFullYear()
       const month = selectedDate.value.getMonth() + 1
       const yearMonth = `${year}-${month.toString().padStart(2, '0')}`
-      const toast = useToast()
-      axios.get(`https://quarkus-azure-functionn-1703850888742.azurewebsites.net/api/invoice?month=${yearMonth}`)
-        .then(response => {
-          const url = window.URL.createObjectURL(new Blob([response.data]))
-          const link = document.createElement('a')
-          link.href = url
-          link.setAttribute('download', `TimeSheet_Petok_Mate_${yearMonth}.xlsx`)
-          document.body.appendChild(link)
-          link.click()
-        })
-        .catch(error => {
-          console.error('Error downloading invoice:', error)
-          toast.error('Error downloading invoice');
-        })
+      const toast = useToast();
+      try {
+        const response = await downloadInvoice(yearMonth);
+        const url = window.URL.createObjectURL(new Blob([response.data]))
+        const link = document.createElement('a')
+        link.href = url
+        link.setAttribute('download', `TimeSheet_Petok_Mate_${yearMonth}.xlsx`)
+        document.body.appendChild(link)
+        link.click()
+      }
+      catch (error) {
+        console.error('Error downloading invoice:', error)
+        toast.error('Error downloading invoice');
+      }
+      finally {
+        isLoading.value = false;
+      }
     }
-
-    return { selectedDate, downloadTimesheet }
+    return { selectedDate, downloadTimesheet, isLoading }
   }
 }
 </script>
@@ -87,5 +95,42 @@ body {
 
 .download-button:hover {
   background-color: #2ea44f;
+}
+
+.ripple-loader {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.ripple-loader div {
+  position: absolute;
+  border: 4px solid #3498db;
+  opacity: 1;
+  border-radius: 50%;
+  animation: ripple-loader 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+.ripple-loader div:nth-child(2) {
+  animation-delay: -0.5s;
+}
+
+@keyframes ripple-loader {
+  0% {
+    top: 36px;
+    left: 36px;
+    width: 0;
+    height: 0;
+    opacity: 1;
+  }
+
+  100% {
+    top: 0px;
+    left: 0px;
+    width: 72px;
+    height: 72px;
+    opacity: 0;
+  }
 }
 </style>
