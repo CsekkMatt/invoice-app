@@ -36,7 +36,7 @@ export default {
         window.location.href = response.data;
       }
       catch (error) {
-        console.error('Error downloading invoice:', error)
+        console.error('Error downloading invoice: ', error)
         toast.error('Error downloading invoice');
       }
       finally {
