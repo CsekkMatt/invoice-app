@@ -32,12 +32,8 @@ export default {
       const toast = useToast();
       try {
         const response = await downloadInvoice(yearMonth);
-        const url = window.URL.createObjectURL(new Blob([response.data]))
-        const link = document.createElement('a')
-        link.href = url
-        link.setAttribute('download', `TimeSheet_Petok_Mate_${yearMonth}.xlsx`)
-        document.body.appendChild(link)
-        link.click()
+        console.log('Downloaded invoice:', response.data);
+        window.location.href = response.data;
       }
       catch (error) {
         console.error('Error downloading invoice:', error)
