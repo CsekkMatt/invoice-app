@@ -32,7 +32,7 @@ export default {
       const toast = useToast();
       try {
         const response = await downloadInvoice(yearMonth);
-        console.log('Downloaded invoice:', response.data);
+        console.log('Downloaded invoice: ', response.data);
         window.location.href = response.data;
       }
       catch (error) {
